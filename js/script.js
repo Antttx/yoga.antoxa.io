@@ -62,22 +62,18 @@ window.addEventListener('DOMContentLoaded', function () {
 
 		function updateClock(){
 			let t = getTimeRemaining(endtime);
-				hours.textContent = t.hours;
-				minutes.textContent = t.minutes;
-				seconds.textContent = t.seconds;
 
-
-			if (hours.textContent < 10){
-				hours.textContent = '0' + t.hours;
+			function checkTime(elem){
+				if(elem < 10){
+					return '0' + elem; 
+				} else {
+					return elem;
+				}
 			}
 
-			if (minutes.textContent < 10){
-				minutes.textContent = '0' + t.minutes;
-			}
-
-			if (seconds.textContent < 10){
-				seconds.textContent = '0' + t.seconds;
-			}
+			hours.textContent = checkTime(t.hours);
+			minutes.textContent = checkTime(t.minutes);
+			seconds.textContent = checkTime(t.seconds);
 
 			if(t.total <= 0){
 				clearInterval(timeInterval);
@@ -90,4 +86,32 @@ window.addEventListener('DOMContentLoaded', function () {
 	}
 
 	setClock('timer', deadline);
+
+	/* Modal */
+
+	let more = document.querySelector('.more'),
+		overlay = document.querySelector('.overlay'),
+		close = document.querySelector('.popup-close'),
+		descriptionBtn = document.querySelectorAll('.description-btn');
+
+	more.addEventListener('click', function(){
+		overlay.style.display = 'block';
+		this.classList.add('more-splash');
+		document.body.style.overflow = 'hidden';
+	});
+
+	close.addEventListener('click', function(){
+		overlay.style.display = 'none';
+		more.classList.remove('more-splash');
+		document.body.style.overflow = '';
+	});
+
+	descriptionBtn.forEach(function(item){
+		item.addEventListener('click', function(){
+			overlay.style.display = 'block';
+			this.classList.add('more-splash');
+			document.body.style.overflow = 'hidden';
+		});
+	});
+
 });
