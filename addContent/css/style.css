@@ -1,0 +1,26 @@
+body{
+     margin:0;
+     padding: 0;
+}
+
+.example{
+     max-width: 1000px;
+     height:700px;
+     box-sizing: border-box;
+     border: 1px solid #f6b93b; 
+     margin:0 auto;
+     margin-top:50px;
+     border-radius: 15px;
+     text-align: center;
+     padding-top:50px
+}
+
+.item{
+     margin: 0 auto;
+     border: 1px dotted #778beb;
+     border-radius: 15px;
+     padding:5px;
+     display:flex;
+     justify-content: center;
+     align-items: center;
+}
