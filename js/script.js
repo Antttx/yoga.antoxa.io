@@ -87,6 +87,8 @@ window.addEventListener('DOMContentLoaded', function () {
 
 	setClock('timer', deadline);
 
+	/* Конец таймера */
+
 	/* Modal */
 
 	let more = document.querySelector('.more'),
@@ -113,5 +115,89 @@ window.addEventListener('DOMContentLoaded', function () {
 			document.body.style.overflow = 'hidden';
 		});
 	});
+
+	/* End Modal */
+
+	/* Form */
+
+	// Modal Form
+	let message = {
+		loading : "Загрузка...",
+		success : "Спасибо! Скоро мы с вами свяжемся!",
+		failure : "Что-то пошло не так"
+	};
+
+	let formModal = document.querySelector('.main-form'),
+		modalInput = formModal.querySelectorAll('input'),
+		statusMessage = document.createElement('div');
+
+	statusMessage.classList.add('status');
+
+	formModal.addEventListener('submit', function(){
+		event.preventDefault();
+
+		formSend(formModal, statusMessage);
+
+		for (let i = 0; i < modalInput.length; i++){
+			modalInput[i].value = '';
+		}
+
+		let close = document.querySelector('.popup-close');
+		close.addEventListener('click', function(){
+			formModal.removeChild(statusMessage);
+		});
+	});
+
+	//Контактная форма
+
+	let formContact = document.querySelector('#form'),
+		contactInput = formContact.querySelectorAll('input');
+
+	formContact.addEventListener('submit', function(){
+		event.preventDefault();
+
+		formSend(formContact, statusMessage);
+
+		for (let i = 0; i < contactInput.length; i++){
+			contactInput[i].value = '';
+		}
+	});
+
+	//Скрипт отправки данных
+	function formSend(f, statusM){
+
+		f.appendChild(statusM);
+
+		let request = new XMLHttpRequest();
+		request.open('POST', 'server.php');
+		/* request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded'); Формат PHP */
+		request.setRequestHeader('Content-type', 'application/json; charset = utf-8'); // Формаm JSON
+
+		let formData = new FormData(f);
+		/* request.send(formData);  Формат PHP */
+
+		// для JSON формата
+		let obj = {};
+		formData.forEach(function(value, key){
+			obj[key] = value;
+		});
+		let json = JSON.stringify(obj);
+
+		request.send(json);
+
+		request.addEventListener('readystatechange', function(){
+			if(request.readyState < 4){
+				statusM.innerHTML = message.loading;
+			} else if(request.readyState === 4 && request.status == 200){
+				statusM.innerHTML = message.success;
+			} else {
+				statusM.innerHTML = message.failure;
+			}
+		});
+	}
+
+	/* Конец Form */
+
+	
 
 });
