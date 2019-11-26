@@ -41,31 +41,31 @@ window.addEventListener('DOMContentLoaded', function () {
 
 	function getTimeRemaining(endtime) {
 		let t = Date.parse(endtime) - Date.parse(new Date()),
-			seconds = Math.floor((t/1000) % 60),
-			minutes = Math.floor((t/1000/60) % 60),
-			hours = Math.floor((t/(1000*60*60)));
+			seconds = Math.floor((t / 1000) % 60),
+			minutes = Math.floor((t / 1000 / 60) % 60),
+			hours = Math.floor((t / (1000 * 60 * 60)));
 
 		return {
-			'total' : t,
-			'seconds' : seconds,
-			'minutes' : minutes,
-			'hours' : hours
+			'total': t,
+			'seconds': seconds,
+			'minutes': minutes,
+			'hours': hours
 		};
 	}
 
-	function setClock(id, endtime){
+	function setClock(id, endtime) {
 		let timer = document.getElementById(id),
 			hours = timer.querySelector('.hours'),
 			minutes = timer.querySelector('.minutes'),
 			seconds = timer.querySelector('.seconds'),
 			timeInterval = setInterval(updateClock, 1000);
 
-		function updateClock(){
+		function updateClock() {
 			let t = getTimeRemaining(endtime);
 
-			function checkTime(elem){
-				if(elem < 10){
-					return '0' + elem; 
+			function checkTime(elem) {
+				if (elem < 10) {
+					return '0' + elem;
 				} else {
 					return elem;
 				}
@@ -75,7 +75,7 @@ window.addEventListener('DOMContentLoaded', function () {
 			minutes.textContent = checkTime(t.minutes);
 			seconds.textContent = checkTime(t.seconds);
 
-			if(t.total <= 0){
+			if (t.total <= 0) {
 				clearInterval(timeInterval);
 				hours.textContent = '00';
 				minutes.textContent = '00';
@@ -96,20 +96,20 @@ window.addEventListener('DOMContentLoaded', function () {
 		close = document.querySelector('.popup-close'),
 		descriptionBtn = document.querySelectorAll('.description-btn');
 
-	more.addEventListener('click', function(){
+	more.addEventListener('click', function () {
 		overlay.style.display = 'block';
 		this.classList.add('more-splash');
 		document.body.style.overflow = 'hidden';
 	});
 
-	close.addEventListener('click', function(){
+	close.addEventListener('click', function () {
 		overlay.style.display = 'none';
 		more.classList.remove('more-splash');
 		document.body.style.overflow = '';
 	});
 
-	descriptionBtn.forEach(function(item){
-		item.addEventListener('click', function(){
+	descriptionBtn.forEach(function (item) {
+		item.addEventListener('click', function () {
 			overlay.style.display = 'block';
 			this.classList.add('more-splash');
 			document.body.style.overflow = 'hidden';
@@ -120,82 +120,74 @@ window.addEventListener('DOMContentLoaded', function () {
 
 	/* Form */
 
-	// Modal Form
 	let message = {
-		loading : "Загрузка...",
-		success : "Спасибо! Скоро мы с вами свяжемся!",
-		failure : "Что-то пошло не так"
+		loading: "Загрузка...",
+		success: "Спасибо! Скоро мы с вами свяжемся!",
+		failure: "Что-то пошло не так"
 	};
 
 	let formModal = document.querySelector('.main-form'),
-		modalInput = formModal.querySelectorAll('input'),
+		formContact = document.querySelector('#form'),
 		statusMessage = document.createElement('div');
 
 	statusMessage.classList.add('status');
 
-	formModal.addEventListener('submit', function(){
-		event.preventDefault();
-
-		formSend(formModal, statusMessage);
-
-		for (let i = 0; i < modalInput.length; i++){
-			modalInput[i].value = '';
-		}
-
-		let close = document.querySelector('.popup-close');
-		close.addEventListener('click', function(){
-			formModal.removeChild(statusMessage);
-		});
-	});
-
-	//Контактная форма
-
-	let formContact = document.querySelector('#form'),
-		contactInput = formContact.querySelectorAll('input');
-
-	formContact.addEventListener('submit', function(){
-		event.preventDefault();
-
-		formSend(formContact, statusMessage);
-
-		for (let i = 0; i < contactInput.length; i++){
-			contactInput[i].value = '';
-		}
-	});
+	sendForm(formModal);
+	sendForm(formContact);
 
 	//Скрипт отправки данных
-	function formSend(f, statusM){
+	function sendForm(elem) {
 
-		f.appendChild(statusM);
+		elem.addEventListener('submit', function(e){
+			e.preventDefault();
+			elem.appendChild(statusMessage);
 
-		let request = new XMLHttpRequest();
-		request.open('POST', 'server.php');
-		/* request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded'); Формат PHP */
-		request.setRequestHeader('Content-type', 'application/json; charset = utf-8'); // Формаm JSON
+			//создание формы в JSON формате
+			let formData = new FormData(elem),
+				obj = {};
+			formData.forEach(function (value, key) {
+				obj[key] = value;
+			});
+			let json = JSON.stringify(obj);
 
-		let formData = new FormData(f);
-		/* request.send(formData);  Формат PHP */
+			// реализация запроса
+			function postData(data){
 
-		// для JSON формата
-		let obj = {};
-		formData.forEach(function(value, key){
-			obj[key] = value;
-		});
-		let json = JSON.stringify(obj);
-
-		request.send(json);
-
-		request.addEventListener('readystatechange', function(){
-			if(request.readyState < 4){
-				statusM.innerHTML = message.loading;
-			} else if(request.readyState === 4 && request.status == 200){
-				statusM.innerHTML = message.success;
-			} else {
-				statusM.innerHTML = message.failure;
+				return new Promise(function (resolve, reject) {
+					let request = new XMLHttpRequest();
+		
+					request.open('POST', 'server.php');
+					/* request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded'); Формат PHP */
+					request.setRequestHeader('Content-type', 'application/json; charset = utf-8'); // Формаm JSON
+		
+					request.onreadystatechange = function () {
+						if (request.readyState < 4) {
+							resolve();
+						} else if (request.readyState === 4 && request.readyState == 200) {
+							resolve();
+						} else {
+							reject();
+						}
+					};
+		
+					request.send(data);
+				});
 			}
+
+			function clearInput() {
+				for (let i = 0; i < elem.querySelectorAll('input').length; i++) {
+					elem[i].value = '';
+				}
+			}
+
+			postData(json)
+				.then(() => statusMessage.innerHTML = message.loading)
+				.then(() => statusMessage.innerHTML = message.success)
+				.catch(() => statusMessage.innerHTML = message.failure)
+				.then(() => setInterval(() => statusMessage.innerHTML = '', 7000))
+				.then(clearInput());
 		});
 	}
-
 	/* Конец Form */
 
 	
