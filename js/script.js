@@ -163,7 +163,7 @@ window.addEventListener('DOMContentLoaded', function () {
 					request.onreadystatechange = function () {
 						if (request.readyState < 4) {
 							resolve();
-						} else if (request.readyState === 4 && request.readyState == 200) {
+						} else if (request.readyState === 4 && request.status == 200) {
 							resolve();
 						} else {
 							reject();
