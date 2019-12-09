@@ -1,7 +1,6 @@
 {
   "name": "yoga",
   "version": "1.0.0",
-  "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -10,14 +9,23 @@
     "type": "git",
     "url": "git+https://github.com/Antttx/yoga.git"
   },
-  "author": "",
+  "author": "antoxa",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/Antttx/yoga/issues"
   },
   "homepage": "https://github.com/Antttx/yoga#readme",
   "devDependencies": {
+    "es6-promise": "^4.2.8",
     "webpack": "^4.41.2",
     "webpack-cli": "^3.3.10"
-  }
+  },
+  "dependencies": {
+    "formdata-polyfill": "^3.0.19",
+    "nodelist-foreach-polyfill": "^1.2.0"
+  },
+  "description": "yoga",
+  "keywords": [
+    "yoga"
+  ]
 }
